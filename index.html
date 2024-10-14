@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Team's Dice</title>
+  <style>
+    body {
+      background-color: #121212;
+      color: white;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .dice {
+      display: flex;
+      gap: 20px;
+      font-size: 2rem;
+      margin-bottom: 20px;
+    }
+    .die {
+      width: 100px;
+      height: 100px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #1E1E1E;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+      transition: transform 3s ease-in-out;
+      text-align: center;
+      padding: 10px;
+    }
+    .die-text {
+      font-size: 1.5rem;
+      color: white;
+      display: none;
+      width: 100%;
+      word-wrap: break-word;
+    }
+    .die-text.long {
+      font-size: 0.8rem; /* Smaller font for long text */
+    }
+    button {
+      background-color: #3a3a3a;
+      border: none;
+      padding: 10px 20px;
+      font-size: 1.5rem;
+      color: #ffffff;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #5a5a5a;
+    }
+  </style>
+</head>
+<body>
+  <div class="dice">
+    <div class="die" id="die1"><div class="die-text">Ashley</div></div>
+    <div class="die" id="die2"><div class="die-text">Mute everything</div></div>
+  </div>
+  <button id="rollButton">What Now Team?</button>
+
+  <script>
+    const dice1 = ["Ashley", "Jolene", "Todd", "Daniel", "Matt", "Brannan", "Jannae"];
+    const dice2 = [
+      "Mute everything", "Tear Down", "RUN, NO TIME TO EXPLAIN!!!", "Call HENRY!!!!", 
+      "Find Sharp objects", "Advance Slide", "Is this Mic on?", "Yikes", "Call Jolene", 
+      "Time to take a shot", "Sleep", "Bedtime", "Mute Speaker", "At Least we Tried", 
+      "Let's Eat", "New Slides", "Start the Timer","Gaff it", "Well Done"
+    ];
+
+    let lastDie2Result = null;
+
+    const die1Text = document.getElementById('die1').querySelector('.die-text');
+    const die2Text = document.getElementById('die2').querySelector('.die-text');
+    const die1 = document.getElementById('die1');
+    const die2 = document.getElementById('die2');
+
+    let rotationAngle1 = 0;
+    let rotationAngle2 = 0;
+
+    // Function to pick a random element from an array, with an option to avoid a specific element
+    function getRandomDie2(avoid) {
+      let possibleChoices = dice2.filter(choice => choice !== avoid);
+      const randomIndex = Math.floor(Math.random() * possibleChoices.length);
+      return possibleChoices[randomIndex];
+    }
+
+    // Function to check if the text is long and needs resizing
+    function adjustFontSize(textElement, text) {
+      if (text.length > 20) {
+        textElement.classList.add('long'); // Add the class for smaller font size
+      } else {
+        textElement.classList.remove('long'); // Use normal font size
+      }
+    }
+
+    document.getElementById('rollButton').addEventListener('click', () => {
+      // Hide current answers
+      die1Text.style.display = 'none';
+      die2Text.style.display = 'none';
+
+      // Increment rotation by 720 degrees for each roll
+      rotationAngle1 += 720;
+      rotationAngle2 += 720;
+
+      // Apply the new rotation values
+      die1.style.transform = `rotate(${rotationAngle1}deg)`;
+      die2.style.transform = `rotate(${rotationAngle2}deg)`;
+
+      // After the roll animation (3 seconds), display the dice results
+      setTimeout(() => {
+        // Generate random results
+        const randomDie1 = dice1[Math.floor(Math.random() * dice1.length)];
+        const randomDie2 = getRandomDie2(lastDie2Result); // Avoid the last die2 result
+        lastDie2Result = randomDie2; // Update the last result for the next roll
+
+        // Adjust font size for Dice 2 based on text length
+        adjustFontSize(die2Text, randomDie2);
+
+        // Show dice results
+        die1Text.textContent = randomDie1;
+        die2Text.textContent = randomDie2;
+        die1Text.style.display = 'block';
+        die2Text.style.display = 'block';
+      }, 3000); // Wait for the rotation animation (3 seconds) to complete
+    });
+  </script>
+</body>
+</html>
